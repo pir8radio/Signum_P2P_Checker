@@ -151,17 +151,19 @@ function Show-CheckingPopup {
     $popup.Size = New-Object System.Drawing.Size(300, 100)
     $popup.StartPosition = "CenterScreen"
 
-    $label = New-Object Windows.Forms.Label
-    $label.Text = "Checking Node P2P...."
-    $label.AutoSize = $true
-    $label.TextAlign = 'MiddleCenter'
-    $label.Dock = 'Fill'
-    $label.Font = New-Object System.Drawing.Font('Microsoft Sans Serif',10,[System.Drawing.FontStyle]::Bold)
-    $popup.Controls.Add($label)
+    $textBox = New-Object Windows.Forms.TextBox
+    $textBox.Text = "Checking Node P2P...."
+    $textBox.ReadOnly = $true
+    $textBox.Multiline = $true
+    $textBox.BackColor = $popup.BackColor
+    $textBox.BorderStyle = [System.Windows.Forms.BorderStyle]::None
+    $textBox.Font = New-Object System.Drawing.Font('Microsoft Sans Serif',10,[System.Drawing.FontStyle]::Bold)
+    $textBox.Dock = 'Fill'
+    $popup.Controls.Add($textBox)
 
     $popupControl = @{
         Form = $popup
-        Label = $label
+        TextBox = $textBox
     }
 
     return $popupControl
@@ -241,6 +243,8 @@ if ($input -ne $null) {
 
     $popupControl = Show-CheckingPopup
     $popupControl.Form.Show()
+
+    Start-Sleep -Seconds 2  # Add a delay to ensure the popup is displayed
 
     foreach ($endpoint in $endpoints) {
         $body = @{

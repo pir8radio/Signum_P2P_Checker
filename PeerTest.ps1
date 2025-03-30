@@ -145,6 +145,34 @@ function Create-ResponseForm {
     $form.ShowDialog()
 }
 
+function Show-CheckingPopup {
+    $popup = New-Object Windows.Forms.Form
+    $popup.Text = "Checking"
+    $popup.Size = New-Object System.Drawing.Size(300, 100)
+    $popup.StartPosition = "CenterScreen"
+
+    $label = New-Object Windows.Forms.Label
+    $label.Text = "Checking Node P2P...."
+    $label.AutoSize = $true
+    $label.TextAlign = 'MiddleCenter'
+    $label.Dock = 'Fill'
+    $label.Font = New-Object System.Drawing.Font('Microsoft Sans Serif',10,[System.Drawing.FontStyle]::Bold)
+    $popup.Controls.Add($label)
+
+    $popupControl = @{
+        Form = $popup
+        Label = $label
+    }
+
+    return $popupControl
+}
+
+function Close-CheckingPopup {
+    param ($popupControl)
+
+    $popupControl.Form.Close()
+}
+
 function Send-PostRequest {
     param (
         [string]$address,
@@ -211,6 +239,9 @@ if ($input -ne $null) {
     $snrPassed = $false
     $p2pPassed = $false
 
+    $popupControl = Show-CheckingPopup
+    $popupControl.Form.Show()
+
     foreach ($endpoint in $endpoints) {
         $body = @{
             "requestType" = $endpoint
@@ -238,6 +269,8 @@ if ($input -ne $null) {
             $responses[$endpoint] = "No response from ${endpoint}."
         }
     }
+
+    Close-CheckingPopup -popupControl $popupControl
 
     Create-ResponseForm -responses $responses -snrPassed $snrPassed -p2pPassed $p2pPassed
 }
